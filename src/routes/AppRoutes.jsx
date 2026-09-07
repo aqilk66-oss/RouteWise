@@ -10,6 +10,9 @@ import usePageTitle from '../hooks/usePageTitle';
 
 // Lazy loaded page components
 const HomePage = lazy(() => import('../pages/HomePage'));
+const FeaturesPage = lazy(() => import('../pages/public/FeaturesPage'));
+const LiveTrackingPage = lazy(() => import('../pages/public/LiveTrackingPage'));
+const SafetyPage = lazy(() => import('../pages/public/SafetyPage'));
 const PrivacyPage = lazy(() => import('../pages/public/PrivacyPage'));
 const TermsPage = lazy(() => import('../pages/public/TermsPage'));
 const LoginPage = lazy(() => import('../pages/LoginPage'));
@@ -160,8 +163,11 @@ export const AppRoutes = () => {
   return (
     <Suspense fallback={<Loader variant="page" text="Loading RouteWise portal..." />}>
       <Routes>
-        {/* Public Marketing & Legal Routes */}
+        {/* Public Marketing & Legal MPA Routes */}
         <Route path="/" element={<HomePage />} />
+        <Route path="/features" element={<FeaturesPage />} />
+        <Route path="/tracking" element={<LiveTrackingPage />} />
+        <Route path="/safety" element={<SafetyPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
 

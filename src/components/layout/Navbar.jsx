@@ -75,9 +75,9 @@ export const Navbar = () => {
 
   const navLinks = [
     { name: 'Home', path: '/' },
-    { name: 'Features', path: '/#features' },
-    { name: 'Tracking', path: '/#tracking-demo' },
-    { name: 'Safety', path: '/#safety' },
+    { name: 'Features', path: '/features' },
+    { name: 'Live Tracking', path: '/tracking' },
+    { name: 'Safety', path: '/safety' },
     { name: 'Super Admin', path: '/super-admin' },
     { name: 'School Admin', path: '/admin' },
     { name: 'Parent Portal', path: '/parent' },
@@ -125,24 +125,30 @@ export const Navbar = () => {
           >
             Home
           </Link>
-          <a
-            href="/#features"
-            className="px-3 py-1.5 rounded-full text-xs font-semibold text-brand-slate hover:text-brand-navy hover:bg-slate-100/80 transition-all duration-200"
+          <Link
+            to="/features"
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+              location.pathname === '/features' ? 'bg-brand-navy text-white shadow-soft' : 'text-brand-slate hover:text-brand-navy hover:bg-slate-100/80'
+            }`}
           >
             Features
-          </a>
-          <a
-            href="/#tracking-demo"
-            className="px-3 py-1.5 rounded-full text-xs font-semibold text-brand-slate hover:text-brand-navy hover:bg-slate-100/80 transition-all duration-200"
+          </Link>
+          <Link
+            to="/tracking"
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+              location.pathname === '/tracking' ? 'bg-brand-navy text-white shadow-soft' : 'text-brand-slate hover:text-brand-navy hover:bg-slate-100/80'
+            }`}
           >
             Live Tracking
-          </a>
-          <a
-            href="/#safety"
-            className="px-3 py-1.5 rounded-full text-xs font-semibold text-brand-slate hover:text-brand-navy hover:bg-slate-100/80 transition-all duration-200"
+          </Link>
+          <Link
+            to="/safety"
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+              location.pathname === '/safety' ? 'bg-brand-navy text-white shadow-soft' : 'text-brand-slate hover:text-brand-navy hover:bg-slate-100/80'
+            }`}
           >
             Safety
-          </a>
+          </Link>
 
           {/* Dedicated MPA Portals Dropdown Menu */}
           <div className="relative group">

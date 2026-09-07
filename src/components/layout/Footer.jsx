@@ -10,10 +10,10 @@ export const Footer = () => {
     {
       title: 'Product',
       links: [
-        { label: 'Live Bus Tracking', href: '/#tracking' },
-        { label: 'Smart Route Optimizer', href: '/#features' },
-        { label: 'Student Safety Grid', href: '/#safety' },
-        { label: 'Real-time ETA Alerts', href: '/#features' },
+        { label: 'Live Bus Tracking', href: '/tracking' },
+        { label: 'Smart Route Optimizer', href: '/features' },
+        { label: 'Student Safety Grid', href: '/safety' },
+        { label: 'Platform Capabilities', href: '/features' },
       ],
     },
     {
@@ -28,10 +28,10 @@ export const Footer = () => {
     {
       title: 'Organization',
       links: [
-        { label: 'About RouteWise', href: '/#' },
-        { label: 'Safety Protocols', href: '/#safety' },
-        { label: 'Implementation Guide', href: '/#how-it-works' },
-        { label: 'Contact Support', href: '/#' },
+        { label: 'About RouteWise', href: '/' },
+        { label: 'Safety Protocols', href: '/safety' },
+        { label: 'Fleet Features', href: '/features' },
+        { label: 'Live Telematics', href: '/tracking' },
       ],
     },
     {
@@ -39,8 +39,8 @@ export const Footer = () => {
       links: [
         { label: 'Student Data Privacy', href: '/privacy' },
         { label: 'Terms of Service', href: '/terms' },
-        { label: 'Security Standards', href: '/#safety' },
-        { label: 'Accessibility Audit', href: '/#features' },
+        { label: 'Security Standards', href: '/safety' },
+        { label: 'Accessibility Audit', href: '/features' },
       ],
     },
   ];
