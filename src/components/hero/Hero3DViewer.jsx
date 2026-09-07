@@ -1,8 +1,33 @@
-import React, { Suspense, useEffect, useRef, useState } from 'react';
+import React, { Suspense, useEffect, useRef, useState, Component } from 'react';
 import { Canvas } from '@react-three/fiber';
 import RouteWiseScene from './three/RouteWiseScene';
 import HeroTelemetryPanels from './HeroTelemetryPanels';
 import { Bus, Loader2 } from 'lucide-react';
+
+// Isolated Canvas Error Boundary preventing 3D/WebGL faults from bubbling to App ErrorBoundary
+class CanvasErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error) {
+    if (this.props.onError) {
+      this.props.onError(error);
+    }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback || null;
+    }
+    return this.props.children;
+  }
+}
 
 /**
  * 3D Canvas wrapper supporting async suspense, WebGL error boundary fallback,
@@ -80,36 +105,54 @@ export const Hero3DViewer = ({ telemetry }) => {
       <HeroTelemetryPanels telemetry={telemetry} />
 
       {/* Three.js Canvas with Suspense fallback and viewport framing optimization */}
-      <Suspense
+      <CanvasErrorBoundary
+        onError={(err) => {
+          console.warn('WebGL/Three.js render exception intercepted gracefully:', err);
+          setHasWebGLError(true);
+        }}
         fallback={
-          <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50/50 backdrop-blur-sm rounded-3xl">
-            <Loader2 className="w-8 h-8 text-brand-blue animate-spin mb-3" />
-            <span className="text-xs font-semibold text-brand-navy tracking-wide">
-              Initializing RouteWise Transport Network...
-            </span>
+          <div className="w-full h-full min-h-[380px] rounded-3xl bg-slate-100/80 border border-border flex flex-col items-center justify-center p-6 text-center relative overflow-hidden">
+            <div className="w-16 h-16 rounded-2xl bg-white shadow-soft flex items-center justify-center text-brand-blue mb-4">
+              <Bus className="w-8 h-8" />
+            </div>
+            <h4 className="text-base font-bold text-brand-navy mb-1">RouteWise Interactive Network</h4>
+            <p className="text-xs text-brand-slate max-w-sm mb-4">
+              Hardware-accelerated 3D view gracefully switched to 2D vector mode.
+            </p>
           </div>
         }
       >
-        <Canvas
-          frameloop={isInViewport ? 'always' : 'never'}
-          camera={{ position: [0, 4.8, 8.2], fov: 38, near: 0.1, far: 50 }}
-          dpr={isMobile ? [1, 1.5] : [1, 2]}
-          gl={{
-            antialias: true,
-            alpha: true,
-            powerPreference: 'high-performance',
-            toneMapping: 3, // ACESFilmicToneMapping
-            toneMappingExposure: 1.15,
-          }}
-          onCreated={({ gl }) => {
-            gl.setClearColor(0x000000, 0);
-          }}
-          onError={() => setHasWebGLError(true)}
-          className="w-full h-full cursor-grab active:cursor-grabbing"
+        <Suspense
+          fallback={
+            <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50/50 backdrop-blur-sm rounded-3xl">
+              <Loader2 className="w-8 h-8 text-brand-blue animate-spin mb-3" />
+              <span className="text-xs font-semibold text-brand-navy tracking-wide">
+                Initializing RouteWise Transport Network...
+              </span>
+            </div>
+          }
         >
-          <RouteWiseScene pointerRef={pointerRef} isMobile={isMobile} />
-        </Canvas>
-      </Suspense>
+          <Canvas
+            frameloop={isInViewport ? 'always' : 'never'}
+            camera={{ position: [0, 4.8, 8.2], fov: 38, near: 0.1, far: 50 }}
+            dpr={isMobile ? [1, 1.5] : [1, 2]}
+            gl={{
+              antialias: true,
+              alpha: true,
+              powerPreference: 'high-performance',
+              toneMapping: 3, // ACESFilmicToneMapping
+              toneMappingExposure: 1.15,
+            }}
+            onCreated={({ gl }) => {
+              gl.setClearColor(0x000000, 0);
+            }}
+            onError={() => setHasWebGLError(true)}
+            className="w-full h-full cursor-grab active:cursor-grabbing"
+          >
+            <RouteWiseScene pointerRef={pointerRef} isMobile={isMobile} />
+          </Canvas>
+        </Suspense>
+      </CanvasErrorBoundary>
     </div>
   );
 };

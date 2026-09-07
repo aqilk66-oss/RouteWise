@@ -38,9 +38,25 @@ export class ErrorBoundary extends Component {
             </span>
 
             <h2 className="text-xl font-bold text-brand-navy mb-2">Transport System Interface Error</h2>
-            <p className="text-xs text-brand-slate mb-6 leading-relaxed">
+            <p className="text-xs text-brand-slate mb-4 leading-relaxed">
               An unexpected render exception occurred in this module. The session state has been protected to ensure data security.
             </p>
+
+            {this.state.error && (
+              <div className="mb-6 p-3 bg-slate-100 rounded-xl text-left border border-slate-200 overflow-hidden">
+                <p className="text-[11px] font-mono text-rose-700 font-semibold break-words">
+                  {this.state.error?.message || String(this.state.error)}
+                </p>
+                {this.state.error?.stack && (
+                  <details className="mt-2 text-[10px] text-slate-500 font-mono">
+                    <summary className="cursor-pointer hover:text-slate-800 select-none">Technical Trace</summary>
+                    <pre className="mt-1 p-2 bg-slate-900 text-slate-100 rounded-lg overflow-x-auto max-h-36 whitespace-pre-wrap text-[9px]">
+                      {this.state.error.stack}
+                    </pre>
+                  </details>
+                )}
+              </div>
+            )}
 
             <div className="flex flex-col sm:flex-row items-center gap-3">
               <Button
@@ -56,7 +72,10 @@ export class ErrorBoundary extends Component {
                 variant="primary"
                 size="md"
                 icon={RefreshCw}
-                onClick={() => window.location.reload()}
+                onClick={() => {
+                  this.setState({ hasError: false, error: null });
+                  window.location.reload();
+                }}
                 className="w-full sm:w-1/2"
               >
                 Reload

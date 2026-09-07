@@ -38,29 +38,38 @@ export const RouteWiseScene = ({ pointerRef, isMobile = false }) => {
   }, []);
 
   useFrame((state, delta) => {
-    if (reducedMotionRef.current) return;
+    if (reducedMotionRef.current || !curve) return;
 
-    // Increment bus progress along route loop smoothly
-    progressRef.current = (progressRef.current + delta * 0.065) % 1;
+    try {
+      const safeDelta = Math.min(delta || 0.016, 0.1);
+      // Increment bus progress along route loop smoothly
+      progressRef.current = (progressRef.current + safeDelta * 0.065) % 1;
 
-    // Calculate current point and tangent for realistic vehicle heading
-    const point = curve.getPointAt(progressRef.current);
-    const tangent = curve.getTangentAt(progressRef.current);
+      // Calculate current point and tangent for realistic vehicle heading
+      const point = curve.getPointAt(progressRef.current);
+      const tangent = curve.getTangentAt(progressRef.current);
 
-    // Direct object transformation bypasses React reconciliation
-    if (busRef.current) {
-      busRef.current.position.set(point.x, point.y + 0.1, point.z);
-      const angle = Math.atan2(tangent.x, tangent.z);
-      busRef.current.rotation.set(0, angle, 0);
-    }
+      // Direct object transformation bypasses React reconciliation
+      if (busRef.current && point && tangent) {
+        busRef.current.position.set(point.x, (point.y || 0) + 0.1, point.z);
+        const angle = Math.atan2(tangent.x, tangent.z);
+        if (!isNaN(angle)) {
+          busRef.current.rotation.set(0, angle, 0);
+        }
+      }
 
-    // Subtle pointer parallax tilt on desktop
-    if (!isMobile && sceneGroup.current && pointerRef?.current) {
-      const targetRotY = pointerRef.current.x * 0.12;
-      const targetRotX = -pointerRef.current.y * 0.08;
+      // Subtle pointer parallax tilt on desktop
+      if (!isMobile && sceneGroup.current && pointerRef?.current) {
+        const px = pointerRef.current.x || 0;
+        const py = pointerRef.current.y || 0;
+        const targetRotY = px * 0.12;
+        const targetRotX = -py * 0.08;
 
-      sceneGroup.current.rotation.y = THREE.MathUtils.lerp(sceneGroup.current.rotation.y, targetRotY, 0.05);
-      sceneGroup.current.rotation.x = THREE.MathUtils.lerp(sceneGroup.current.rotation.x, targetRotX, 0.05);
+        sceneGroup.current.rotation.y = THREE.MathUtils.lerp(sceneGroup.current.rotation.y, targetRotY, 0.05);
+        sceneGroup.current.rotation.x = THREE.MathUtils.lerp(sceneGroup.current.rotation.x, targetRotX, 0.05);
+      }
+    } catch (e) {
+      // Non-fatal frame calculation safety
     }
   });
 

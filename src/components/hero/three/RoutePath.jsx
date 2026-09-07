@@ -14,10 +14,15 @@ export const RoutePath = ({ curve, busProgress = 0 }) => {
     return new THREE.TubeGeometry(curve, 100, 0.95, 8, true);
   }, [curve]);
 
+  // Outer curb geometry along curve
+  const curbsGeometry = useMemo(() => {
+    return new THREE.TubeGeometry(curve, 120, 1.02, 4, true);
+  }, [curve]);
+
   // Route telemetry glow line (Teal/Blue)
-  const lineGeometry = useMemo(() => {
-    return new THREE.BufferGeometry().setFromPoints(points);
-  }, [points]);
+  const beamGeometry = useMemo(() => {
+    return new THREE.TubeGeometry(curve, 140, 0.035, 6, true);
+  }, [curve]);
 
   return (
     <group>
@@ -34,13 +39,13 @@ export const RoutePath = ({ curve, busProgress = 0 }) => {
 
       {/* Outer Road Edge Curbs (Subtle Slate borders) */}
       <mesh position={[0, 0.01, 0]}>
-        <primitive object={new THREE.TubeGeometry(curve, 120, 1.02, 4, true)} />
+        <primitive object={curbsGeometry} />
         <meshStandardMaterial color="#334155" roughness={0.8} />
       </mesh>
 
       {/* Real-time Tracking Glowing Route Line (Neon Cyan Highway Beam) */}
       <mesh position={[0, 0.04, 0]}>
-        <primitive object={new THREE.TubeGeometry(curve, 140, 0.035, 6, true)} />
+        <primitive object={beamGeometry} />
         <meshStandardMaterial color="#14B8A6" emissive="#14B8A6" emissiveIntensity={1.2} />
       </mesh>
 
