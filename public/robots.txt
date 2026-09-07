@@ -1,0 +1,25 @@
+User-agent: *
+Allow: /
+Allow: /features
+Allow: /safety
+Allow: /tracking
+Allow: /how-it-works
+Allow: /contact
+Allow: /login
+Allow: /register
+
+# Disallow indexing of private dashboard and operational data
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /transport
+Disallow: /transport/*
+Disallow: /parent
+Disallow: /parent/*
+Disallow: /driver
+Disallow: /driver/*
+Disallow: /student
+Disallow: /student/*
+Disallow: /unauthorized
+Disallow: /dashboard
+
+Sitemap: https://routewise-transit.web.app/sitemap.xml

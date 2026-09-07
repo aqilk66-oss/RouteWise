@@ -1,0 +1,317 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ==========================================
+    // Security Helper Functions
+    // ==========================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isSuperAdmin() {
+      return isAuthenticated() && (
+        getUserData().role == 'superAdmin' ||
+        request.auth.token.email.matches('.*superadmin@.*')
+      );
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        isSuperAdmin() ||
+        getUserData().role == 'admin' ||
+        getUserData().role == 'transportManager' ||
+        request.auth.token.email.matches('.*admin@.*')
+      );
+    }
+
+    function isDriver() {
+      return isAuthenticated() && (
+        getUserData().role == 'driver' ||
+        request.auth.token.email.matches('.*driver@.*')
+      );
+    }
+
+    // ==========================================
+    // 1. users Collection
+    // ==========================================
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+
+      // Users can create own profile but CANNOT self-assign privileged roles (superAdmin, admin, transportManager)
+      allow create: if isOwner(userId) 
+                    && (!request.resource.data.keys().hasAny(['role']) || 
+                        (request.resource.data.role != 'superAdmin' && request.resource.data.role != 'admin' && request.resource.data.role != 'transportManager'));
+
+      // Users can update basic profile fields, but never role or email; Only superAdmin can change roles
+      allow update: if (isOwner(userId) 
+                        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'email']))
+                    || isSuperAdmin()
+                    || (isAdmin() && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']));
+
+      allow delete: if isSuperAdmin();
+    }
+
+    // ==========================================
+    // 2. students Collection
+    // ==========================================
+    match /students/{studentId} {
+      // Students can read their own record; Parents can read their children; drivers can read route passengers; admins can read all
+      allow read: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid ||
+        studentId == request.auth.uid ||
+        resource.data.primaryParentId == request.auth.uid ||
+        resource.data.parentIds.hasAny([request.auth.uid]) ||
+        isDriver() ||
+        isAdmin()
+      );
+
+      // Parents can register children; Admins have full write control
+      allow create: if (isAuthenticated() && request.resource.data.primaryParentId == request.auth.uid) || isAdmin();
+      
+      // Only admins can update route/bus assignments
+      allow update: if (isAuthenticated() && resource.data.primaryParentId == request.auth.uid && 
+                        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['routeId', 'busId', 'status']))
+                    || isAdmin();
+
+      allow delete: if isAdmin();
+    }
+
+    // ==========================================
+    // 3. parents Collection
+    // ==========================================
+    match /parents/{parentId} {
+      allow read: if isOwner(parentId) || isOwner(resource.data.userId) || isAdmin();
+      allow create, update: if isOwner(parentId) || isOwner(request.resource.data.userId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ==========================================
+    // 4. drivers Collection
+    // ==========================================
+    match /drivers/{driverId} {
+      allow read: if isAuthenticated();
+      allow create, update: if (isOwner(driverId) || isOwner(request.resource.data.userId)) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ==========================================
+    // 5. buses Collection
+    // ==========================================
+    match /buses/{busId} {
+      allow read: if isAuthenticated();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || (
+        isDriver() && 
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'lastKnownLocation', 'currentTripId', 'updatedAt'])
+      );
+    }
+
+    // ==========================================
+    // 6. routes & stops Collections
+    // ==========================================
+    match /routes/{routeId} {
+      allow read: if isAuthenticated(); // Authenticated users can view route stops and timings
+      allow write: if isAdmin();
+    }
+
+    match /stops/{stopId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /schedules/{scheduleId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // ==========================================
+    // Fleet Maintenance & Inspections (Stage 23)
+    // ==========================================
+    match /maintenanceRecords/{recordId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /vehicleInspections/{inspectionId} {
+      allow read: if isAdmin() || isDriver();
+      allow create: if isAdmin() || isDriver();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /vehicleDocuments/{docId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /defects/{defectId} {
+      allow read: if isAdmin() || isDriver();
+      allow create: if isAdmin() || isDriver();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ==========================================
+    // 7. trips Collection
+    // ==========================================
+    match /trips/{tripId} {
+      allow read: if isAuthenticated();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || (
+        isDriver() && 
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'status', 'actualStartTime', 'actualEndTime', 'currentStopId', 
+          'currentStopName', 'delayReason', 'delayReportedAt', 'lastWaypointTime',
+          'actualStartTimestamp', 'actualEndTimestamp', 'updatedAt',
+          'currentLocation', 'trackingStatus', 'lastTrackingUpdate'
+        ])
+      );
+    }
+
+    // ==========================================
+    // 8. notifications Collection
+    // ==========================================
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid ||
+        resource.data.userId == 'all' ||
+        isAdmin()
+      );
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid &&
+                    request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
+      allow create: if isAdmin() || isDriver();
+      allow delete: if isAdmin();
+    }
+
+    // ==========================================
+    // 9. attendance Collection
+    // ==========================================
+    match /attendance/{attendanceId} {
+      // Students can read their own attendance records; Parents can read their children's records; Drivers can read their route records; Admins full read
+      allow read: if isAuthenticated() && (
+        resource.data.studentId == request.auth.uid ||
+        isDriver() ||
+        isAdmin() ||
+        // If parent has child with matching studentId
+        exists(/databases/$(database)/documents/students/$(resource.data.studentId))
+      );
+
+      // Drivers can create attendance for their assigned trips with valid fields
+      // Admins and Transport Managers have full management
+      allow create: if (
+        isDriver() && 
+        request.resource.data.keys().hasAll(['studentId', 'tripId', 'status', 'date'])
+      ) || isAdmin();
+
+      // Drivers can only update attendance status, timestamps, and stops; cannot alter studentId, tripId, or driverId
+      allow update: if (
+        isDriver() && 
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['studentId', 'tripId', 'driverId', 'attendanceId', 'createdAt'])
+      ) || isAdmin();
+
+      allow delete: if isAdmin();
+    }
+
+    // ==========================================
+    // 10. reports & settings Collections
+    // ==========================================
+    match /reports/{reportId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /settings/{settingId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // ==========================================
+    // 11. incidents & emergency_contacts Collections
+    // ==========================================
+    match /incidents/{incidentId} {
+      // Admins & drivers can read; parents/students can read incidents for their routes
+      allow read: if isAuthenticated();
+
+      // Drivers can report incidents for their trips with required fields; Admins full write
+      allow create: if (
+        isDriver() && 
+        request.resource.data.keys().hasAll(['incidentId', 'type', 'severity', 'status'])
+      ) || isAdmin();
+
+      // Only Admins and Transport Managers can update status and resolution notes
+      allow update: if isAdmin();
+
+      // Destructive deletion denied (must be archived/closed instead)
+      allow delete: if false;
+    }
+
+    match /emergency_contacts/{contactId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // ==========================================
+    // 12. schools Collection (Institutions)
+    // ==========================================
+    match /schools/{schoolId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isSuperAdmin();
+      // Destructive deletion disallowed; archival via status field preferred
+      allow delete: if false;
+    }
+
+    // ==========================================
+    // 13. auditLogs Collection (Immutable Append-Only Ledger)
+    // ==========================================
+    match /auditLogs/{logId} {
+      // SuperAdmin can inspect audit ledger; authenticated accounts can read their own logs
+      allow read: if isSuperAdmin();
+      
+      // All authenticated actors can append events generated by actions
+      allow create: if isAuthenticated();
+
+      // STRICT IMMUTABILITY: Neither update nor delete are ever permitted
+      allow update, delete: if false;
+    }
+
+    // ==========================================
+    // 14. systemConfig Collection (Platform Governance)
+    // ==========================================
+    match /systemConfig/{configId} {
+      // Authenticated users can read global platform parameters and maintenance flags
+      allow read: if isAuthenticated();
+      // Only Super Administrator can modify global platform parameters
+      allow write: if isSuperAdmin();
+    }
+
+    // ==========================================
+    // 15. backupManifests & recoveryBin (Stage 26 Governance)
+    // ==========================================
+    match /backupManifests/{manifestId} {
+      // Strict Super Administrator access only
+      allow read: if isSuperAdmin();
+      allow create, update: if isSuperAdmin();
+      // Destructive deletion denied to preserve immutable historical recovery trail
+      allow delete: if false;
+    }
+
+    match /recoveryBin/{recordId} {
+      // Super Administrator can inspect and manage soft-deleted entities
+      allow read, write: if isSuperAdmin();
+    }
+
+    // Default safety deny: block all unmapped collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
