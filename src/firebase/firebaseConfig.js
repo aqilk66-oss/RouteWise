@@ -5,13 +5,13 @@ import { getStorage } from 'firebase/storage';
 import { getAnalytics, isSupported } from 'firebase/analytics';
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyAHXQX5PZOEKVUaSAtGect5Z5MaNwvH7D8',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'routewise-b4741.firebaseapp.com',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'routewise-b4741',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'routewise-b4741.firebasestorage.app',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '806918370452',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:806918370452:web:74e02e0d6f8b42c45c7081',
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || 'G-R4L0F4V4GS',
 };
 
 // Validate that required keys are present
