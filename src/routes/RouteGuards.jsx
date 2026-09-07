@@ -3,13 +3,24 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Loader from '../components/ui/Loader';
 import { USER_ROLES } from '../constants/collections';
+import { hasPermission } from '../constants/permissions';
 
 /**
- * ProtectedRoute: Requires user to be authenticated.
- * If not authenticated, redirects to /login while saving the attempted location.
+ * Normalizes role string to canonical form
+ */
+const normalizeRole = (r) => {
+  if (r === 'superAdmin') return USER_ROLES.SUPER_ADMIN;
+  if (r === 'transportManager') return USER_ROLES.ADMIN;
+  return r;
+};
+
+/**
+ * ProtectedRoute: Requires user to be authenticated and have an active status.
+ * If not authenticated, redirects to /login while saving attempted location.
+ * If suspended or disabled, redirects to /unauthorized with status reason.
  */
 export const ProtectedRoute = () => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, profile, loading } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -20,15 +31,30 @@ export const ProtectedRoute = () => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
+  // Account status check (active, suspended, disabled, pending)
+  const status = profile?.status || 'active';
+  if (status === 'suspended' || status === 'disabled') {
+    return (
+      <Navigate 
+        to="/unauthorized" 
+        state={{ 
+          from: location, 
+          reason: status === 'suspended' ? 'Your account has been suspended by administration.' : 'Your account is disabled.' 
+        }} 
+        replace 
+      />
+    );
+  }
+
   return <Outlet />;
 };
 
 /**
  * RoleRoute: Requires user to possess one of the allowed roles.
- * Redirects to /dashboard if authorized role is missing.
+ * Redirects to /unauthorized if role is not permitted or account is suspended.
  */
-export const RoleRoute = ({ allowedRoles = [] }) => {
-  const { isAuthenticated, role, loading } = useAuth();
+export const RoleRoute = ({ allowedRoles = [], requiredPermission = null }) => {
+  const { isAuthenticated, role, profile, loading } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -39,10 +65,26 @@ export const RoleRoute = ({ allowedRoles = [] }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Super Admin has global access to all role areas; Admin has access to allowed operational areas
-  const hasAccess = role === USER_ROLES.SUPER_ADMIN || role === USER_ROLES.ADMIN || allowedRoles.includes(role);
+  const status = profile?.status || 'active';
+  if (status === 'suspended' || status === 'disabled') {
+    return (
+      <Navigate 
+        to="/unauthorized" 
+        state={{ from: location, reason: `Your account is ${status}. Access denied.` }} 
+        replace 
+      />
+    );
+  }
 
-  if (!hasAccess) {
+  const activeRole = normalizeRole(role);
+  const normalizedAllowed = allowedRoles.map(normalizeRole);
+
+  // Super Admin possesses system-wide access
+  const isSuper = activeRole === USER_ROLES.SUPER_ADMIN;
+  const roleMatch = normalizedAllowed.includes(activeRole);
+  const permMatch = requiredPermission ? hasPermission(activeRole, requiredPermission) : true;
+
+  if (!isSuper && (!roleMatch || !permMatch)) {
     return <Navigate to="/unauthorized" state={{ from: location }} replace />;
   }
 
@@ -51,10 +93,10 @@ export const RoleRoute = ({ allowedRoles = [] }) => {
 
 /**
  * SuperAdminRoute: Strictly restricted to USER_ROLES.SUPER_ADMIN.
- * Ordinary Admins, Managers, and other roles are redirected to /unauthorized.
+ * Normal Admins, Drivers, Parents, and Students are redirected to /unauthorized.
  */
 export const SuperAdminRoute = () => {
-  const { isAuthenticated, role, loading } = useAuth();
+  const { isAuthenticated, role, profile, loading } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -65,7 +107,19 @@ export const SuperAdminRoute = () => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (role !== USER_ROLES.SUPER_ADMIN) {
+  const status = profile?.status || 'active';
+  if (status === 'suspended' || status === 'disabled') {
+    return (
+      <Navigate 
+        to="/unauthorized" 
+        state={{ from: location, reason: `Governance access denied: account is ${status}.` }} 
+        replace 
+      />
+    );
+  }
+
+  const activeRole = normalizeRole(role);
+  if (activeRole !== USER_ROLES.SUPER_ADMIN) {
     return <Navigate to="/unauthorized" state={{ from: location }} replace />;
   }
 

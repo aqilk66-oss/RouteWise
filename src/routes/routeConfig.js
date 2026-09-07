@@ -71,6 +71,18 @@ export const ROUTE_REGISTRY = {
     description: 'The requested route coordinates do not exist on the RouteWise network.',
   },
 
+  // --- Normal User Routes ---
+  '/user': {
+    path: '/user',
+    label: 'Member Portal',
+    title: 'RouteWise — Member Portal',
+    roles: [USER_ROLES.USER],
+    category: 'Member',
+    parent: null,
+    searchable: true,
+    description: 'Member account dossier, transport application status, and community transit guidelines.',
+  },
+
   // --- Super Admin Governance Routes ---
   '/super-admin': {
     path: '/super-admin',

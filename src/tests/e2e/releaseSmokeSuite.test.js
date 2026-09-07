@@ -19,12 +19,12 @@ import { backupManifestService } from '../../services/backup/backupManifestServi
 describe('RouteWise 1.0 Release Smoke Suite', () => {
   describe('1. Role Access & Route Security Matrix', () => {
     it('verifies all 6 core roles are registered with explicit clearance boundaries', () => {
-      expect(USER_ROLES.SUPER_ADMIN).toBe('superAdmin');
+      expect(USER_ROLES.SUPER_ADMIN).toBe('super_admin');
       expect(USER_ROLES.ADMIN).toBe('admin');
-      expect(USER_ROLES.TRANSPORT_MANAGER).toBe('transportManager');
       expect(USER_ROLES.DRIVER).toBe('driver');
       expect(USER_ROLES.PARENT).toBe('parent');
       expect(USER_ROLES.STUDENT).toBe('student');
+      expect(USER_ROLES.USER).toBe('user');
     });
 
     it('enforces strict SuperAdmin clearance on system governance routes', () => {

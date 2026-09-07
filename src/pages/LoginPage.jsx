@@ -165,12 +165,12 @@ export const LoginPage = () => {
 
         <div className="grid grid-cols-2 gap-2">
           {[
-            { label: 'Super Admin', role: 'superAdmin', path: '/super-admin', color: 'hover:border-purple-400 hover:bg-purple-50/50' },
+            { label: 'Super Admin', role: 'super_admin', path: '/super-admin', color: 'hover:border-purple-400 hover:bg-purple-50/50' },
             { label: 'School Admin', role: 'admin', path: '/admin', color: 'hover:border-blue-400 hover:bg-blue-50/50' },
-            { label: 'Transport Mgr', role: 'transportManager', path: '/admin', color: 'hover:border-sky-400 hover:bg-sky-50/50' },
             { label: 'Bus Driver', role: 'driver', path: '/driver', color: 'hover:border-amber-400 hover:bg-amber-50/50' },
             { label: 'Parent Portal', role: 'parent', path: '/parent', color: 'hover:border-teal-400 hover:bg-teal-50/50' },
             { label: 'Student Pass', role: 'student', path: '/student', color: 'hover:border-emerald-400 hover:bg-emerald-50/50' },
+            { label: 'Normal User', role: 'user', path: '/user', color: 'hover:border-slate-400 hover:bg-slate-50/50' },
           ].map((item) => (
             <button
               key={item.role}

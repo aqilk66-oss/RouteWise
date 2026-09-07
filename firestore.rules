@@ -6,58 +6,79 @@ service cloud.firestore {
     // ==========================================
     // Security Helper Functions
     // ==========================================
-    function isAuthenticated() {
+    function isSignedIn() {
       return request.auth != null;
     }
 
     function isOwner(userId) {
-      return isAuthenticated() && request.auth.uid == userId;
+      return isSignedIn() && request.auth.uid == userId;
     }
 
-    function getUserData() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function userRole() {
+      return userDoc().data.role;
+    }
+
+    function userStatus() {
+      return userDoc().data.status;
+    }
+
+    function isActive() {
+      return isSignedIn() && (userStatus() == 'active' || userStatus() == null);
     }
 
     function isSuperAdmin() {
-      return isAuthenticated() && (
-        getUserData().role == 'superAdmin' ||
-        request.auth.token.email.matches('.*superadmin@.*')
-      );
+      return isActive() && (userRole() == 'super_admin' || userRole() == 'superAdmin');
     }
 
     function isAdmin() {
-      return isAuthenticated() && (
+      return isActive() && (
         isSuperAdmin() ||
-        getUserData().role == 'admin' ||
-        getUserData().role == 'transportManager' ||
-        request.auth.token.email.matches('.*admin@.*')
+        userRole() == 'admin' ||
+        userRole() == 'transportManager'
       );
     }
 
     function isDriver() {
-      return isAuthenticated() && (
-        getUserData().role == 'driver' ||
-        request.auth.token.email.matches('.*driver@.*')
-      );
+      return isActive() && userRole() == 'driver';
+    }
+
+    function isParent() {
+      return isActive() && userRole() == 'parent';
+    }
+
+    function isStudent() {
+      return isActive() && userRole() == 'student';
     }
 
     // ==========================================
     // 1. users Collection
     // ==========================================
     match /users/{userId} {
+      // Users can read own profile; Admins can read all profiles
       allow read: if isOwner(userId) || isAdmin();
 
-      // Users can create own profile but CANNOT self-assign privileged roles (superAdmin, admin, transportManager)
-      allow create: if isOwner(userId) 
-                    && (!request.resource.data.keys().hasAny(['role']) || 
-                        (request.resource.data.role != 'superAdmin' && request.resource.data.role != 'admin' && request.resource.data.role != 'transportManager'));
+      // Users can create own profile on register ONLY with role 'user' and status 'active'
+      // Privileged roles cannot be created by public clients
+      allow create: if isOwner(userId) && (
+        !request.resource.data.keys().hasAny(['role']) ||
+        request.resource.data.role == 'user'
+      ) && (
+        !request.resource.data.keys().hasAny(['status']) ||
+        request.resource.data.status == 'active'
+      );
 
-      // Users can update basic profile fields, but never role or email; Only superAdmin can change roles
-      allow update: if (isOwner(userId) 
-                        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'email']))
-                    || isSuperAdmin()
-                    || (isAdmin() && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']));
+      // Normal users can update non-security profile fields (never role, status, email, or uid)
+      // Only super_admin can change roles or status
+      allow update: if isSuperAdmin() || (
+        isOwner(userId) &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'status', 'email', 'uid', 'createdAt'])
+      );
 
+      // Only Super Admin can delete user profile records
       allow delete: if isSuperAdmin();
     }
 
@@ -65,23 +86,26 @@ service cloud.firestore {
     // 2. students Collection
     // ==========================================
     match /students/{studentId} {
-      // Students can read their own record; Parents can read their children; drivers can read route passengers; admins can read all
-      allow read: if isAuthenticated() && (
-        resource.data.userId == request.auth.uid ||
-        studentId == request.auth.uid ||
-        resource.data.primaryParentId == request.auth.uid ||
-        resource.data.parentIds.hasAny([request.auth.uid]) ||
-        isDriver() ||
-        isAdmin()
+      // Students can read their own record; Parents can read ONLY their linked children; Drivers read assigned route passengers; Admins full read
+      allow read: if isAdmin() || (
+        isActive() && (
+          resource.data.userId == request.auth.uid ||
+          studentId == request.auth.uid ||
+          resource.data.primaryParentId == request.auth.uid ||
+          (resource.data.parentIds != null && resource.data.parentIds.hasAny([request.auth.uid])) ||
+          isDriver()
+        )
       );
 
-      // Parents can register children; Admins have full write control
-      allow create: if (isAuthenticated() && request.resource.data.primaryParentId == request.auth.uid) || isAdmin();
+      // Parents can register children; Admins have full management
+      allow create: if (isActive() && request.resource.data.primaryParentId == request.auth.uid) || isAdmin();
       
-      // Only admins can update route/bus assignments
-      allow update: if (isAuthenticated() && resource.data.primaryParentId == request.auth.uid && 
-                        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['routeId', 'busId', 'status']))
-                    || isAdmin();
+      // Parents can update basic child notes; only admins can update routeId, busId, or status
+      allow update: if isAdmin() || (
+        isActive() && 
+        resource.data.primaryParentId == request.auth.uid && 
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['routeId', 'busId', 'status', 'stopId'])
+      );
 
       allow delete: if isAdmin();
     }

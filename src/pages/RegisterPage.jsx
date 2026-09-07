@@ -54,9 +54,10 @@ export const RegisterPage = () => {
     setErrorMessage('');
 
     try {
-      // Safe default role 'parent' assigned automatically
+      // Safe default role 'user' assigned automatically
       await register({
         fullName: formData.fullName.trim(),
+        name: formData.fullName.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim(),
         password: formData.password,
@@ -65,11 +66,11 @@ export const RegisterPage = () => {
 
       addToast({
         title: 'Account Created',
-        message: 'Welcome to RouteWise! Initializing your student transit dashboard.',
+        message: 'Welcome to RouteWise! Initializing your workspace.',
         type: 'success',
       });
 
-      navigate('/parent', { replace: true });
+      navigate('/dashboard', { replace: true });
     } catch (err) {
       setErrorMessage(getAuthErrorMessage(err));
     } finally {
@@ -160,7 +161,7 @@ export const RegisterPage = () => {
 
         <div className="p-3 rounded-xl bg-blue-50/70 border border-brand-blue/20 text-[11px] text-brand-navy">
           <span>
-            Public registration defaults safely to <strong>Parent / Guardian</strong> portal access. Staff & driver access is provisioned by school administration.
+            Public registration assigns standard <strong>User</strong> access. Privileged roles (Parent, Driver, Student, Admin) are granted through verified school transport enrollment or administrative provisioning.
           </span>
         </div>
 

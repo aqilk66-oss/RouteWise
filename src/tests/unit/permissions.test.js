@@ -4,29 +4,28 @@ import { PERMISSIONS, ROLE_PERMISSIONS, hasPermission } from '../../constants/pe
 
 describe('Role and Permission Security Matrix', () => {
   it('should define all 6 official RouteWise roles', () => {
-    expect(USER_ROLES.SUPER_ADMIN).toBe('superAdmin');
+    expect(USER_ROLES.SUPER_ADMIN).toBe('super_admin');
     expect(USER_ROLES.ADMIN).toBe('admin');
-    expect(USER_ROLES.TRANSPORT_MANAGER).toBe('transportManager');
     expect(USER_ROLES.DRIVER).toBe('driver');
     expect(USER_ROLES.PARENT).toBe('parent');
     expect(USER_ROLES.STUDENT).toBe('student');
+    expect(USER_ROLES.USER).toBe('user');
   });
 
   it('should provide clear readable labels for all roles', () => {
     expect(ROLE_LABELS[USER_ROLES.SUPER_ADMIN]).toBe('Super Administrator');
     expect(ROLE_LABELS[USER_ROLES.ADMIN]).toBe('Administrator');
-    expect(ROLE_LABELS[USER_ROLES.TRANSPORT_MANAGER]).toBe('Transport Manager');
     expect(ROLE_LABELS[USER_ROLES.DRIVER]).toBe('Bus Driver');
     expect(ROLE_LABELS[USER_ROLES.PARENT]).toBe('Parent / Guardian');
     expect(ROLE_LABELS[USER_ROLES.STUDENT]).toBe('Student');
+    expect(ROLE_LABELS[USER_ROLES.USER]).toBe('Normal User');
   });
 
   it('should define standardized account statuses', () => {
     expect(USER_STATUS.ACTIVE).toBe('active');
-    expect(USER_STATUS.INACTIVE).toBe('inactive');
     expect(USER_STATUS.SUSPENDED).toBe('suspended');
     expect(USER_STATUS.PENDING).toBe('pending');
-    expect(USER_STATUS.ARCHIVED).toBe('archived');
+    expect(USER_STATUS.DISABLED).toBe('disabled');
   });
 
   it('should grant Super Admin system governance permissions', () => {
@@ -69,5 +68,14 @@ describe('Role and Permission Security Matrix', () => {
     expect(hasPermission(USER_ROLES.PARENT, PERMISSIONS.ATTENDANCE_MANAGE)).toBe(false);
     expect(hasPermission(USER_ROLES.STUDENT, PERMISSIONS.TRACKING_READ)).toBe(true);
     expect(hasPermission(USER_ROLES.STUDENT, PERMISSIONS.SAFETY_MANAGE)).toBe(false);
+  });
+
+  it('should restrict normal user to self-profile and application submission only', () => {
+    expect(hasPermission(USER_ROLES.USER, PERMISSIONS.PROFILE_READ_OWN)).toBe(true);
+    expect(hasPermission(USER_ROLES.USER, PERMISSIONS.APPLICATIONS_CREATE_OWN)).toBe(true);
+    expect(hasPermission(USER_ROLES.USER, PERMISSIONS.TRACKING_READ)).toBe(false);
+    expect(hasPermission(USER_ROLES.USER, PERMISSIONS.STUDENTS_MANAGE)).toBe(false);
+    expect(hasPermission(USER_ROLES.USER, PERMISSIONS.DRIVERS_MANAGE)).toBe(false);
+    expect(hasPermission(USER_ROLES.USER, PERMISSIONS.SYSTEM_CONFIG)).toBe(false);
   });
 });

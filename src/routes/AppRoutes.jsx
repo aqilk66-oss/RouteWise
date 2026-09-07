@@ -18,6 +18,7 @@ const TermsPage = lazy(() => import('../pages/public/TermsPage'));
 const LoginPage = lazy(() => import('../pages/LoginPage'));
 const RegisterPage = lazy(() => import('../pages/RegisterPage'));
 const DashboardPage = lazy(() => import('../pages/DashboardPage'));
+const UserDashboardPage = lazy(() => import('../pages/user/UserDashboardPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 const UnauthorizedPage = lazy(() => import('../pages/UnauthorizedPage'));
 
@@ -186,9 +187,10 @@ export const AppRoutes = () => {
           {/* Smart role redirection root */}
           <Route path="/dashboard" element={<DashboardPage />} />
 
-          {/* Super Admin Protected Governance Routes (/super-admin/*) */}
+          {/* Super Admin Protected Governance Routes (/super-admin/* and /admin/super-admin/*) */}
           <Route element={<SuperAdminRoute />}>
             <Route path="/super-admin" element={<SuperAdminDashboardPage />} />
+            <Route path="/admin/super-admin" element={<SuperAdminDashboardPage />} />
             <Route path="/super-admin/users" element={<SuperAdminUsersPage />} />
             <Route path="/super-admin/users/:userId" element={<SuperAdminUserDetailPage />} />
             <Route path="/super-admin/roles" element={<SuperAdminRolesPage />} />
@@ -215,6 +217,12 @@ export const AppRoutes = () => {
             <Route path="/super-admin/profile" element={<SuperAdminProfilePage />} />
             <Route path="/super-admin/settings" element={<SuperAdminSettingsPage />} />
             <Route path="/super-admin/404" element={<NotFoundPage />} />
+          </Route>
+
+          {/* Normal User Protected Routes (/user/*) */}
+          <Route element={<RoleRoute allowedRoles={[USER_ROLES.USER]} />}>
+            <Route path="/user" element={<UserDashboardPage />} />
+            <Route path="/user/dashboard" element={<UserDashboardPage />} />
           </Route>
 
           {/* Admin & Transport Manager Protected Routes (/admin/*) */}

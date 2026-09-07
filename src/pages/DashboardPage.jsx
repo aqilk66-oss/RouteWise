@@ -15,10 +15,11 @@ export const DashboardPage = () => {
     if (!loading && user) {
       switch (role) {
         case USER_ROLES.SUPER_ADMIN:
+        case 'superAdmin':
           navigate('/super-admin', { replace: true });
           break;
         case USER_ROLES.ADMIN:
-        case USER_ROLES.TRANSPORT_MANAGER:
+        case 'transportManager':
           navigate('/admin', { replace: true });
           break;
         case USER_ROLES.DRIVER:
@@ -28,8 +29,11 @@ export const DashboardPage = () => {
           navigate('/student', { replace: true });
           break;
         case USER_ROLES.PARENT:
-        default:
           navigate('/parent', { replace: true });
+          break;
+        case USER_ROLES.USER:
+        default:
+          navigate('/user', { replace: true });
           break;
       }
     }

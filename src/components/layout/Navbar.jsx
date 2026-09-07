@@ -200,12 +200,19 @@ export const Navbar = () => {
                 <span>🎓 Student Transit Pass</span>
                 <span className="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded font-bold">Pass</span>
               </Link>
+              <Link
+                to="/user"
+                className="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-brand-navy hover:bg-slate-100 hover:text-slate-800 transition-colors"
+              >
+                <span>👤 Member Dashboard</span>
+                <span className="text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded font-bold">Member</span>
+              </Link>
               <div className="border-t border-border/60 my-1"></div>
               <Link
                 to="/login"
                 className="flex items-center justify-between p-2 rounded-xl text-xs font-bold text-brand-blue hover:bg-brand-blue/10 transition-colors"
               >
-                <span>⚡ Instant Role Switcher</span>
+                <span>⚡ Switch / Sign In</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>

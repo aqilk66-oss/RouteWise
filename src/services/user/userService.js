@@ -44,15 +44,17 @@ export const userService = {
   createUserProfile: async (uid, data) => {
     if (!uid) throw new Error('UID is required to create a user profile.');
 
-    // Security check: Force safe role if unprivileged public registration attempts privileged role
-    let assignedRole = data.role || DEFAULT_ROLE;
-    if (PRIVILEGED_ROLES.includes(assignedRole) && !data.isPrivilegedProvisioned) {
-      assignedRole = DEFAULT_ROLE;
+    // Security check: Public registration is strictly restricted to USER_ROLES.USER ('user')
+    // Privileged accounts (admin, super_admin, driver) can only be provisioned through controlled admin processes
+    let assignedRole = USER_ROLES.USER;
+    if (data.isPrivilegedProvisioned && data.role) {
+      assignedRole = data.role;
     }
 
     const profileData = {
       uid,
-      fullName: data.fullName || 'RouteWise User',
+      name: data.fullName || data.name || 'RouteWise User',
+      fullName: data.fullName || data.name || 'RouteWise User',
       email: data.email || '',
       phone: data.phone || '',
       role: assignedRole,

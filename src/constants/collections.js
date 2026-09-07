@@ -46,39 +46,42 @@ export const BACKUP_SCOPE = {
 };
 
 export const USER_ROLES = {
-  SUPER_ADMIN: 'superAdmin',
+  SUPER_ADMIN: 'super_admin',
   ADMIN: 'admin',
-  TRANSPORT_MANAGER: 'transportManager',
-  DRIVER: 'driver',
   PARENT: 'parent',
+  DRIVER: 'driver',
   STUDENT: 'student',
+  USER: 'user',
+  // Backward compatibility alias during migration
+  TRANSPORT_MANAGER: 'admin',
 };
 
-export const DEFAULT_ROLE = USER_ROLES.PARENT;
+export const DEFAULT_ROLE = USER_ROLES.USER;
 
 export const PRIVILEGED_ROLES = [
   USER_ROLES.SUPER_ADMIN,
   USER_ROLES.ADMIN,
-  USER_ROLES.TRANSPORT_MANAGER,
   USER_ROLES.DRIVER,
 ];
 
 export const ROLE_LABELS = {
   [USER_ROLES.SUPER_ADMIN]: 'Super Administrator',
   [USER_ROLES.ADMIN]: 'Administrator',
-  [USER_ROLES.TRANSPORT_MANAGER]: 'Transport Manager',
-  [USER_ROLES.DRIVER]: 'Bus Driver',
   [USER_ROLES.PARENT]: 'Parent / Guardian',
+  [USER_ROLES.DRIVER]: 'Bus Driver',
   [USER_ROLES.STUDENT]: 'Student',
+  [USER_ROLES.USER]: 'Normal User',
 };
 
 // Account Status Vocabularies
 export const USER_STATUS = {
   ACTIVE: 'active',
-  INACTIVE: 'inactive',
   SUSPENDED: 'suspended',
   PENDING: 'pending',
-  ARCHIVED: 'archived',
+  DISABLED: 'disabled',
+  // Backward compatibility aliases
+  INACTIVE: 'disabled',
+  ARCHIVED: 'disabled',
 };
 
 // Bus Operational Statuses (Standardized Lifecycle)
