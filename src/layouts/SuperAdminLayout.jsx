@@ -17,7 +17,10 @@ import {
   User, 
   LayoutDashboard,
   Server,
-  Lock
+  Lock,
+  BarChart3,
+  Database,
+  RotateCcw
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { ROLE_LABELS, USER_ROLES } from '../constants/collections';

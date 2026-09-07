@@ -5,7 +5,7 @@ import gsap from 'gsap';
 import Button from '../ui/Button';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../feedback/Toast';
-import { ROLE_LABELS } from '../../constants/collections';
+import { ROLE_LABELS, USER_ROLES } from '../../constants/collections';
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -14,7 +14,7 @@ export const Navbar = () => {
   const navigate = useNavigate();
   const mobileDrawerRef = useRef(null);
 
-  const { user, profile, role, isAuthenticated, loading, logout } = useAuth();
+  const { user, profile, role, isAuthenticated, loading, logout, switchRole } = useAuth();
   const { addToast } = useToast();
 
   useEffect(() => {
@@ -165,48 +165,85 @@ export const Navbar = () => {
               <div className="px-3 py-1.5 text-[10px] font-bold text-brand-slate uppercase tracking-wider border-b border-border/60 mb-1">
                 Multi-Page Dashboards
               </div>
-              <Link
-                to="/super-admin"
-                className="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-brand-navy hover:bg-purple-50 hover:text-purple-700 transition-colors"
+              {/* Portal Links that automatically switch demo role if needed */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (role !== USER_ROLES.SUPER_ADMIN && typeof switchRole === 'function') {
+                    switchRole(USER_ROLES.SUPER_ADMIN);
+                  }
+                  navigate('/super-admin');
+                }}
+                className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-brand-navy hover:bg-purple-50 hover:text-purple-700 transition-colors text-left"
               >
                 <span>🛡️ Super Admin Portal</span>
                 <span className="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-bold">System</span>
-              </Link>
-              <Link
-                to="/admin"
-                className="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-brand-navy hover:bg-blue-50 hover:text-brand-blue transition-colors"
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (role !== USER_ROLES.ADMIN && typeof switchRole === 'function') {
+                    switchRole(USER_ROLES.ADMIN);
+                  }
+                  navigate('/admin');
+                }}
+                className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-brand-navy hover:bg-blue-50 hover:text-brand-blue transition-colors text-left"
               >
                 <span>🏫 School Admin & Fleet</span>
                 <span className="text-[10px] bg-blue-100 text-brand-blue px-1.5 py-0.5 rounded font-bold">Ops</span>
-              </Link>
-              <Link
-                to="/parent"
-                className="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-brand-navy hover:bg-teal-50 hover:text-teal-700 transition-colors"
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (role !== USER_ROLES.PARENT && typeof switchRole === 'function') {
+                    switchRole(USER_ROLES.PARENT);
+                  }
+                  navigate('/parent');
+                }}
+                className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-brand-navy hover:bg-teal-50 hover:text-teal-700 transition-colors text-left"
               >
                 <span>👨‍👩‍👦 Parent Live Hub</span>
                 <span className="text-[10px] bg-teal-100 text-teal-700 px-1.5 py-0.5 rounded font-bold">Tracking</span>
-              </Link>
-              <Link
-                to="/driver"
-                className="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-brand-navy hover:bg-amber-50 hover:text-amber-800 transition-colors"
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (role !== USER_ROLES.DRIVER && typeof switchRole === 'function') {
+                    switchRole(USER_ROLES.DRIVER);
+                  }
+                  navigate('/driver');
+                }}
+                className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-brand-navy hover:bg-amber-50 hover:text-amber-800 transition-colors text-left"
               >
                 <span>🚌 Driver Console & HUD</span>
                 <span className="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-bold">Driver</span>
-              </Link>
-              <Link
-                to="/student"
-                className="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-brand-navy hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (role !== USER_ROLES.STUDENT && typeof switchRole === 'function') {
+                    switchRole(USER_ROLES.STUDENT);
+                  }
+                  navigate('/student');
+                }}
+                className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-brand-navy hover:bg-emerald-50 hover:text-emerald-700 transition-colors text-left"
               >
                 <span>🎓 Student Transit Pass</span>
                 <span className="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded font-bold">Pass</span>
-              </Link>
-              <Link
-                to="/user"
-                className="flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-brand-navy hover:bg-slate-100 hover:text-slate-800 transition-colors"
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (role !== USER_ROLES.USER && typeof switchRole === 'function') {
+                    switchRole(USER_ROLES.USER);
+                  }
+                  navigate('/user');
+                }}
+                className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-brand-navy hover:bg-slate-100 hover:text-slate-800 transition-colors text-left"
               >
                 <span>👤 Member Dashboard</span>
                 <span className="text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded font-bold">Member</span>
-              </Link>
+              </button>
               <div className="border-t border-border/60 my-1"></div>
               <Link
                 to="/login"
@@ -301,16 +338,31 @@ export const Navbar = () => {
                   </a>
                 );
               }
+
+              const roleMapping = {
+                '/super-admin': USER_ROLES.SUPER_ADMIN,
+                '/admin': USER_ROLES.ADMIN,
+                '/parent': USER_ROLES.PARENT,
+                '/driver': USER_ROLES.DRIVER,
+              };
+
               return (
-                <Link
+                <button
                   key={link.name}
-                  to={link.path}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="mobile-nav-item py-2.5 px-4 rounded-lg text-sm font-semibold text-brand-navy hover:bg-surface-subtle transition-colors flex items-center justify-between"
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    const targetRole = roleMapping[link.path];
+                    if (targetRole && role !== targetRole && typeof switchRole === 'function') {
+                      switchRole(targetRole);
+                    }
+                    navigate(link.path);
+                  }}
+                  className="mobile-nav-item py-2.5 px-4 rounded-lg text-sm font-semibold text-brand-navy hover:bg-surface-subtle transition-colors flex items-center justify-between text-left w-full"
                 >
                   <span>{link.name}</span>
                   <ArrowRight className="w-4 h-4 text-brand-slate" />
-                </Link>
+                </button>
               );
             })}
           </nav>
