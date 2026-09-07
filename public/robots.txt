@@ -11,6 +11,8 @@ Allow: /register
 # Disallow indexing of private dashboard and operational data
 Disallow: /admin
 Disallow: /admin/*
+Disallow: /super-admin
+Disallow: /super-admin/*
 Disallow: /transport
 Disallow: /transport/*
 Disallow: /parent
@@ -19,6 +21,8 @@ Disallow: /driver
 Disallow: /driver/*
 Disallow: /student
 Disallow: /student/*
+Disallow: /user
+Disallow: /user/*
 Disallow: /unauthorized
 Disallow: /dashboard
 
