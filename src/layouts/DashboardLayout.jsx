@@ -21,7 +21,12 @@ import {
   User,
   ClipboardCheck,
   Radio,
-  Search
+  Search,
+  Clock,
+  Wrench,
+  FileText,
+  ShieldCheck,
+  BarChart3
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { ROLE_LABELS, USER_ROLES } from '../constants/collections';

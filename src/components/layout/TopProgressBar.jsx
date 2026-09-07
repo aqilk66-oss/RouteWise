@@ -12,6 +12,9 @@ export const TopProgressBar = () => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    // Scroll window to top smoothly on new route navigation
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+
     // Start progress bar on route change
     setVisible(true);
     setProgress(20);

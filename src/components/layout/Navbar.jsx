@@ -59,6 +59,29 @@ export const Navbar = () => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
+  // Close mobile drawer on Escape key or outside click
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+    const handleClickOutside = (e) => {
+      if (mobileMenuOpen && mobileDrawerRef.current && !mobileDrawerRef.current.contains(e.target) && !e.target.closest('button[aria-label]')) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    if (mobileMenuOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [mobileMenuOpen]);
+
   const handleLogout = async () => {
     try {
       await logout();
