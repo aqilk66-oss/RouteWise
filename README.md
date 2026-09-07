@@ -1,16 +1,114 @@
-# React + Vite
+# RouteWise — Every Route, Under Control.
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+**Enterprise School Transport Operations & Real-Time GPS Tracking Platform — Version 1.0.0**
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚌 Overview
+**RouteWise** is an enterprise-grade school transport operations and student safety portal built as a high-performance **Multi-Page Application (MPA)**. It connects school administrations, fleet dispatchers, bus drivers, parents, and students within a unified, real-time command structure.
 
-## React Compiler
+### Core Capabilities
+- **Institutional Multi-Campus Fleet Operations**: Manage buses, drivers, attendants, routes, and stops across institutional campus boundaries.
+- **Real-Time GPS Bus Tracking**: Leaflet/OpenStreetMap geospatial tracking with telemetry freshness monitoring, bearing-aligned vehicle markers, and breadcrumb trails.
+- **Role-Based Access Control (RBAC)**: Strict role-separated interfaces across six distinct user tiers: `Super Admin`, `Admin`, `Transport Manager`, `Driver`, `Parent`, and `Student`.
+- **Student Boarding & Attendance Verification**: Digital passenger manifests with NFC/manual attendance check-in, check-out, and automated parent arrival notifications.
+- **Safety, Incident & SOS Management**: Instant driver SOS panic alerts, incident classification, digital vehicle pre-trip checklists, and emergency communications.
+- **Automated Route Planning & Conflict Engine**: Corridor sequencing, vehicle capacity validation, and automated schedule conflict detection.
+- **Enterprise Governance & Coldline Backup**: Tamper-proof append-only audit logging, institutional system configuration, and GCP disaster recovery.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the Oxlint configuration
+## 🛠️ Technology Stack
+- **Frontend Core**: React 19, Vite 8, React Router 7 (Multi-Page Architecture)
+- **Styling & Design System**: Tailwind CSS, Lucide Icons, Glassmorphic & Spatial UI Tokens
+- **Animations & 3D**: GSAP (GreenSock) with ScrollTrigger, Three.js & React Three Fiber
+- **Geospatial Mapping**: Leaflet, React-Leaflet, OpenStreetMap
+- **Backend & Real-Time Services**: Firebase Authentication, Cloud Firestore, Firebase Storage
+- **Testing & Quality Assurance**: Vitest, Happy-DOM, Testing Library
+- **CI/CD & Hosting**: GitHub Actions, Vercel & Firebase Hosting
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18.x, 20.x, or 22.x LTS
+- npm 9.x+
+
+### 1. Clone & Install Dependencies
+```bash
+git clone https://github.com/aqilk66-oss/RouteWise.git
+cd RouteWise
+npm install
+```
+
+### 2. Configure Environment Variables
+Copy `.env.example` to `.env` and fill in your Firebase project credentials:
+```bash
+cp .env.example .env
+```
+
+Required environment variables:
+```env
+# Firebase Web Client Configuration
+VITE_FIREBASE_API_KEY=AIzaSy...
+VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-project
+VITE_FIREBASE_STORAGE_BUCKET=your-project.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=806918370452
+VITE_FIREBASE_APP_ID=1:806918370452:web:...
+VITE_FIREBASE_MEASUREMENT_ID=G-...
+
+# Optional EmailJS Client Dispatch
+VITE_EMAILJS_SERVICE_ID=
+VITE_EMAILJS_TEMPLATE_ID=
+VITE_EMAILJS_PUBLIC_KEY=
+```
+
+### 3. Run Locally (Development)
+```bash
+npm run dev
+```
+Navigate to `http://localhost:5173` to explore RouteWise.
+
+---
+
+## 🧪 Testing & Code Quality
+RouteWise includes a comprehensive automated test suite spanning unit, component, integration, and security checks:
+```bash
+# Run all automated tests
+npm test
+
+# Run Oxlint static analysis
+npm run lint
+
+# Run production build validation
+npm run build
+```
+
+---
+
+## 🛡️ User Roles & MPA Portal Architecture
+
+| Role | Portal Path | Purpose & Clearance |
+| :--- | :--- | :--- |
+| **Super Admin** | `/super-admin/*` | Platform governance, multi-school administration, audit trails, backups, system health. |
+| **School Admin** | `/admin/*` | Campus transport operations, student rosters, driver management, vehicle assignments. |
+| **Transport Manager**| `/admin/planning/*`| Route corridor builder, vehicle schedule planning, trip generation, fleet maintenance. |
+| **Bus Driver** | `/driver/*` | Real-time GPS broadcaster, digital pre-trip inspection, student boarding attendance, SOS alert. |
+| **Parent / Guardian**| `/parent/*` | Real-time child transit tracking, pickup ETA, attendance verification, driver contact. |
+| **Student** | `/student/*` | Digital transit pass, route map, daily schedule, boarding history. |
+
+---
+
+## 📦 Deployment & Production Security
+RouteWise is pre-configured with zero-trust production response headers in both `vercel.json` and `firebase.json`:
+- **Content Security Policy (CSP)**: Strictly limits scripts, frames, and connections to verified endpoints.
+- **Frame & Sniffing Protection**: `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`.
+- **Asset Caching**: Immutable 1-year HTTP caching on all `/assets/*` bundles.
+- **Deep MPA Links**: Single-origin rewrites preventing 404s on browser reloads.
+
+---
+
+## 📄 License
+Proprietary & Confidential — RouteWise Technologies Inc. Every Route, Under Control.
