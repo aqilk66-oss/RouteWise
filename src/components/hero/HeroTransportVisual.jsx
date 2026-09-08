@@ -31,24 +31,31 @@ export const HeroTransportVisual = () => {
       <div className="absolute w-64 h-64 rounded-full bg-brand-teal/8 blur-3xl pointer-events-none -bottom-10 -left-10" />
 
       {/* Floating Status Indicator (Top-Left: Clean, Modern SaaS Status Badge) */}
-      <div className="absolute top-5 sm:top-6 left-5 sm:left-6 z-20 flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-white/80 shadow-[0_4px_12px_rgba(0,0,0,0.06)] text-xs font-bold text-brand-navy transition-transform duration-300 group-hover:translate-y-[-2px]">
+      <div className="absolute top-5 sm:top-6 left-5 sm:left-6 z-20 flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-white/80 shadow-[0_4px_14px_rgba(0,0,0,0.06)] text-xs font-bold text-brand-navy transition-transform duration-300 group-hover:translate-y-[-2px]">
         <span className="flex h-2 w-2 relative">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-teal opacity-75" />
           <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-teal" />
         </span>
-        <span className="text-[11px] uppercase tracking-wider text-brand-slate font-semibold">
-          Real-Time Fleet Grid
+        <span className="text-[11px] uppercase tracking-wider text-brand-slate font-bold">
+          Bus 101 • Active Live
         </span>
       </div>
 
-      {/* Floating Destination Badge (Top-Right: Connected Destination) */}
-      <div className="absolute top-5 sm:top-6 right-5 sm:right-6 z-20 hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/85 backdrop-blur-md border border-white/80 shadow-[0_4px_12px_rgba(0,0,0,0.05)] text-[11px] font-semibold text-brand-slate transition-transform duration-300 group-hover:translate-y-[-2px]">
-        <span className="w-1.5 h-1.5 rounded-full bg-brand-blue" />
-        <span>Campus Connected</span>
+      {/* Floating Telematics Telemetry HUD Pill (Top-Right: Next Stop & ETA) */}
+      <div className="absolute top-5 sm:top-6 right-5 sm:right-6 z-20 hidden sm:flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-white/80 shadow-[0_4px_14px_rgba(0,0,0,0.05)] text-xs transition-transform duration-300 group-hover:translate-y-[-2px]">
+        <div className="flex items-center gap-1.5 text-brand-blue font-semibold text-[11px]">
+          <MapPin className="w-3.5 h-3.5 text-brand-blue" />
+          <span>North Campus</span>
+        </div>
+        <span className="text-slate-300">|</span>
+        <div className="flex items-center gap-1 text-emerald-600 font-bold text-[11px]">
+          <Radio className="w-3 h-3 text-emerald-500 animate-pulse" />
+          <span>ETA 8 min</span>
+        </div>
       </div>
 
       {/* Secondary Floating Info Card (Bottom-Right: Safe Telematics) */}
-      <div className="absolute bottom-5 sm:bottom-6 right-5 sm:right-6 z-20 flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/90 backdrop-blur-md border border-white/80 shadow-[0_8px_20px_rgba(26,54,93,0.08)] text-xs transition-transform duration-300 group-hover:translate-y-[-2px]">
+      <div className="absolute bottom-5 sm:bottom-6 right-5 sm:right-6 z-20 flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/95 backdrop-blur-md border border-white/80 shadow-[0_10px_25px_rgba(26,54,93,0.1)] text-xs transition-transform duration-300 group-hover:translate-y-[-2px]">
         <div className="w-8 h-8 rounded-xl bg-teal-50 text-brand-teal flex items-center justify-center shrink-0 shadow-sm">
           <ShieldCheck className="w-4 h-4" />
         </div>
@@ -56,6 +63,12 @@ export const HeroTransportVisual = () => {
           <p className="font-bold text-brand-navy leading-tight">RouteWise Network</p>
           <p className="text-[10px] text-brand-slate">Active GPS • Corridor Monitored</p>
         </div>
+      </div>
+
+      {/* Tertiary Mini Stat Chip (Bottom-Left: On Route Telemetry) */}
+      <div className="absolute bottom-5 sm:bottom-6 left-5 sm:left-6 z-20 hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/90 backdrop-blur-md border border-white/80 shadow-[0_6px_16px_rgba(0,0,0,0.05)] text-[11px] font-semibold text-slate-700 transition-transform duration-300 group-hover:translate-y-[-2px]">
+        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+        <span>Roster: 24/24 Verified</span>
       </div>
 
       {/* Primary 3D Isometric Transport Illustration */}
