@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PublicLayout from '../layouts/PublicLayout';
-import SiteLoader from '../components/feedback/SiteLoader';
 import Hero from '../components/hero/Hero';
 import TrustSection from '../sections/home/TrustSection';
 import PlatformOverviewSection from '../sections/home/PlatformOverviewSection';
@@ -21,8 +20,6 @@ import { useGsap } from '../hooks/useGsap';
  * Features buttery smooth GSAP scroll-triggered entrance animations across all sections.
  */
 export const HomePage = () => {
-  const [loaderComplete, setLoaderComplete] = useState(false);
-
   // GSAP scroll trigger animations for seamless buttery scrolling
   useGsap((gsap, ScrollTrigger) => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -49,11 +46,7 @@ export const HomePage = () => {
   }, []);
 
   return (
-    <>
-      {/* Professional Site Loader */}
-      <SiteLoader onComplete={() => setLoaderComplete(true)} />
-
-      <PublicLayout>
+    <PublicLayout>
         {/* Stage 3 Cinematic 3D Hero */}
         <Hero />
 
@@ -71,7 +64,6 @@ export const HomePage = () => {
         <div className="animate-on-scroll"><FinalCTASection /></div>
         <div className="animate-on-scroll"><ContactSection /></div>
       </PublicLayout>
-    </>
   );
 };
 
