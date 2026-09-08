@@ -3,13 +3,13 @@ import gsap from 'gsap';
 import Container from '../layout/Container';
 import HeroBackground from './HeroBackground';
 import HeroContent from './HeroContent';
-import Hero3DViewer from './Hero3DViewer';
+import HeroTransportVisual from './HeroTransportVisual';
 import { HERO_DATA } from '../../data/heroData';
 import { useGsap } from '../../hooks/useGsap';
 
 /**
  * RouteWise World-Class Hero Section
- * Orchestrates typography, GSAP master entrance timeline, and Three.js 3D transportation viewer.
+ * Orchestrates typography, GSAP master entrance timeline, and premium transport visual.
  */
 export const Hero = () => {
   const heroRef = useRef(null);
@@ -54,16 +54,10 @@ export const Hero = () => {
       '-=0.2'
     )
     .fromTo(
-      '.hero-3d-container',
-      { opacity: 0, scale: 0.95 },
-      { opacity: 1, scale: 1, duration: 0.9, ease: 'power2.out' },
-      '-=0.7'
-    )
-    .fromTo(
-      '.hero-telemetry-panel',
-      { opacity: 0, y: 15, scale: 0.95 },
-      { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.15, ease: 'back.out(1.2)' },
-      '-=0.4'
+      '.hero-transport-container',
+      { opacity: 0, scale: 0.96, y: 12 },
+      { opacity: 1, scale: 1, y: 0, duration: 0.8, ease: 'power2.out' },
+      '-=0.6'
     );
   }, []);
 
@@ -82,9 +76,9 @@ export const Hero = () => {
             <HeroContent data={HERO_DATA} />
           </div>
 
-          {/* Right Column: 3D Transportation Scene & Spatial Telemetry Panels */}
+          {/* Right Column: Premium Transport Visual */}
           <div className="lg:col-span-7 xl:col-span-7 z-10 w-full">
-            <Hero3DViewer telemetry={HERO_DATA.telemetry} />
+            <HeroTransportVisual />
           </div>
         </div>
       </Container>

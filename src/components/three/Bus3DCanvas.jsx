@@ -1,11 +1,10 @@
-import Hero3DViewer, { Bus3DCanvas as AliasedBus3DCanvas } from '../hero/Hero3DViewer';
+import HeroTransportVisual from '../hero/HeroTransportVisual';
 
 /**
- * Bus3DCanvas Component Export
+ * Bus3DCanvas Component Export (Backward Compatibility Shim)
  * 
- * Re-exports the upgraded RouteWise 3D Transportation Hero Canvas
- * ensuring all paths expecting `components/three/Bus3DCanvas` seamlessly render
- * the cinematic, optimized school bus visualization.
+ * Re-exports the high-performance HeroTransportVisual, ensuring any legacy references
+ * to Bus3DCanvas seamlessly render the modern illustration without Three.js overhead.
  */
-export const Bus3DCanvas = AliasedBus3DCanvas;
-export default Hero3DViewer;
+export const Bus3DCanvas = HeroTransportVisual;
+export default HeroTransportVisual;

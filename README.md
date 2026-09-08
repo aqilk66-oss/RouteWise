@@ -113,5 +113,11 @@ RouteWise is pre-configured with zero-trust production response headers in both 
 
 ---
 
+## 🎨 Hero Visual Source & Licensing
+- **Asset**: `public/assets/hero_transport_illustration.jpg`
+- **Asset Description**: Clean, modern SaaS vector-styled technology illustration featuring a yellow school bus traveling along an illuminated smart route corridor with glowing GPS waypoint pins on a crisp, light background.
+- **Licensing / Status**: Custom high-resolution digital illustration generated specifically for the RouteWise open-source educational transport portal. Completely free of watermarks, third-party logos, or copyrighted promotional art.
+- **Optimization**: Clean raster asset replacing heavy WebGL/Three.js render loops, reducing initial landing page JS payload and eliminating GPU overhead.
+
 ## 📄 License
 Proprietary & Confidential — RouteWise Technologies Inc. Every Route, Under Control.

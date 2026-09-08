@@ -17,7 +17,7 @@ export const HERO_DATA = {
   trustBadge: {
     title: "Smart School Transportation Platform",
     subtitle: "Built for safer, smarter student mobility",
-    statusText: "Live Transport Network Demo"
+    statusText: "Smart School Transport Network"
   },
   telemetry: {
     busId: "Bus 24",
