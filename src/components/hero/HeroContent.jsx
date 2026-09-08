@@ -64,7 +64,7 @@ export const HeroContent = ({ data }) => {
       </div>
 
       {/* Quick Portal Switcher Pills with Modern Micro-Interactions */}
-      <div className="flex flex-wrap items-center gap-2 mb-8 p-1.5 rounded-2xl bg-slate-50/90 border border-slate-200/60 backdrop-blur-sm">
+      <div className="hero-portals flex flex-wrap items-center gap-2 mb-8 p-1.5 rounded-2xl bg-slate-50/90 border border-slate-200/60 backdrop-blur-sm">
         <span className="text-[11px] font-bold text-brand-slate uppercase tracking-wider px-2">Portals:</span>
         <Link to="/super-admin" className="px-3 py-1 rounded-xl bg-purple-50/90 hover:bg-purple-100 text-purple-700 text-xs font-semibold border border-purple-200/80 transition-all hover:scale-[1.03] shadow-xs">
           Super Admin
