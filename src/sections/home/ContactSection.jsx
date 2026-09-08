@@ -5,9 +5,11 @@ import Badge from '../../components/ui/Badge';
 import Input from '../../components/forms/Input';
 import Button from '../../components/ui/Button';
 import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle } from 'lucide-react';
-import emailService from '../../services/email/emailService';
+import { sendContactEmail } from '../../services/emailService';
+import { useToast } from '../../components/feedback/Toast';
 
 export const ContactSection = () => {
+  const { addToast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -28,24 +30,54 @@ export const ContactSection = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Basic frontend validation
-    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
-      setStatus({
-        type: 'error',
-        message: 'Please complete all required fields (Name, Email, and Message).',
-      });
+    // Prevent duplicate submissions
+    if (loading) return;
+
+    // Frontend validation
+    if (!formData.name.trim()) {
+      setStatus({ type: 'error', message: 'Please enter your name.' });
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email.trim() || !emailRegex.test(formData.email.trim())) {
+      setStatus({ type: 'error', message: 'Please provide a valid email address.' });
+      return;
+    }
+
+    if (!formData.subject.trim()) {
+      setStatus({ type: 'error', message: 'Please enter an inquiry subject.' });
+      return;
+    }
+
+    if (!formData.message.trim()) {
+      setStatus({ type: 'error', message: 'Please enter your message.' });
       return;
     }
 
     setLoading(true);
     setStatus({ type: null, message: '' });
 
-    try {
-      await emailService.sendInquiry(formData);
+    const result = await sendContactEmail({
+      name: formData.name,
+      email: formData.email,
+      subject: formData.subject,
+      message: formData.message,
+    });
+
+    setLoading(false);
+
+    if (result.success) {
       setStatus({
         type: 'success',
-        message: 'Message sent successfully! Our transport team will follow up within 24 hours.',
+        message: 'Your inquiry has been sent successfully! Our team will respond shortly.',
       });
+      addToast({
+        title: 'Message Transmitted',
+        message: 'Your inquiry was delivered via RouteWise dispatch.',
+        type: 'success',
+      });
+      // Clear form on success
       setFormData({
         name: '',
         email: '',
@@ -54,14 +86,17 @@ export const ContactSection = () => {
         subject: '',
         message: '',
       });
-    } catch (err) {
-      // Graceful handling when EmailJS credentials are not yet configured by the user
+    } else {
       setStatus({
         type: 'error',
-        message: err.message || "We couldn't send your message right now. Please verify EmailJS configuration.",
+        message: result.error || 'Unable to send your message right now. Please try again later.',
       });
-    } finally {
-      setLoading(false);
+      addToast({
+        title: 'Dispatch Notice',
+        message: result.error || 'Unable to dispatch message.',
+        type: 'warning',
+      });
+      // User entered form data is preserved upon failure
     }
   };
 
@@ -192,11 +227,12 @@ export const ContactSection = () => {
                 variant="primary"
                 size="md"
                 loading={loading}
+                disabled={loading}
                 icon={Send}
                 iconPosition="right"
                 className="w-full"
               >
-                {loading ? 'Transmitting...' : 'Send Inquiry Message'}
+                {loading ? 'Sending...' : 'Send Inquiry Message'}
               </Button>
             </form>
           </Card>
