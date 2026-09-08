@@ -14,13 +14,20 @@ import FAQSection from '../sections/home/FAQSection';
 import FinalCTASection from '../sections/home/FinalCTASection';
 import ContactSection from '../sections/home/ContactSection';
 import { useGsap } from '../hooks/useGsap';
+import { runPageEntrance } from '../animations/pageEntrance';
 
 /**
  * RouteWise Complete Landing Page — Stage 4
  * Features buttery smooth GSAP scroll-triggered entrance animations across all sections.
  */
 export const HomePage = () => {
-  // GSAP scroll trigger animations for seamless buttery scrolling
+  // Quick, professional GSAP entrance immediately after RouteWise loader finishes (0.4–0.8s)
+  React.useEffect(() => {
+    const revert = runPageEntrance();
+    return () => revert();
+  }, []);
+
+  // GSAP scroll trigger animations for seamless buttery scrolling on lower sections
   useGsap((gsap, ScrollTrigger) => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) return;

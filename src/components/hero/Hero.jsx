@@ -14,52 +14,7 @@ import { useGsap } from '../../hooks/useGsap';
 export const Hero = () => {
   const heroRef = useRef(null);
 
-  // Master GSAP Hero entrance timeline
-  useGsap((gsapInstance) => {
-    // Check if user prefers reduced motion
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
-
-    const tl = gsapInstance.timeline({
-      defaults: { ease: 'power3.out' },
-    });
-
-    tl.fromTo(
-      '.hero-eyebrow',
-      { opacity: 0, y: 15 },
-      { opacity: 1, y: 0, duration: 0.5, delay: 0.1 }
-    )
-    .fromTo(
-      '.hero-line',
-      { y: '100%', opacity: 0 },
-      { y: '0%', opacity: 1, duration: 0.7, stagger: 0.12 },
-      '-=0.3'
-    )
-    .fromTo(
-      '.hero-description',
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.6 },
-      '-=0.4'
-    )
-    .fromTo(
-      '.hero-ctas',
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.5 },
-      '-=0.3'
-    )
-    .fromTo(
-      '.hero-trust',
-      { opacity: 0 },
-      { opacity: 1, duration: 0.5 },
-      '-=0.2'
-    )
-    .fromTo(
-      '.hero-transport-container',
-      { opacity: 0, scale: 0.96, y: 12 },
-      { opacity: 1, scale: 1, y: 0, duration: 0.8, ease: 'power2.out' },
-      '-=0.6'
-    );
-  }, []);
+  // Note: Entrance sequence is master orchestrated right after the RouteWise loader finishes via runPageEntrance()
 
   return (
     <section

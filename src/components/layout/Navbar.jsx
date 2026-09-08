@@ -111,7 +111,7 @@ export const Navbar = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+      className={`navbar-entrance fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         isScrolled
           ? 'glass-panel-elevated py-3 border-b border-border/70 shadow-soft'
           : 'bg-transparent py-5'
