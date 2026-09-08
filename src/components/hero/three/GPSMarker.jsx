@@ -3,13 +3,16 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
 /**
- * 3D GPS Location Pin with gentle hover animation and pulsing beacon ring
+ * Minimalist 3D GPS Waypoint Marker
+ * - Clean vertical pin with understated hovering motion
+ * - Subtle ground pulse ring with controlled opacity
+ * - Professional Blue & Teal color accents
  */
 export const GPSMarker = ({
   position = [0, 0, 0],
-  label = 'Bus Stop',
+  label = 'Stop',
   color = '#2563EB',
-  emissive = '#14B8A6'
+  emissive = '#0EA5E9'
 }) => {
   const markerGroup = useRef();
   const ringRef = useRef();
@@ -17,42 +20,43 @@ export const GPSMarker = ({
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
     if (markerGroup.current) {
-      // Gentle floating hover motion
-      markerGroup.current.position.y = position[1] + Math.sin(time * 2.5) * 0.08;
+      // Very gentle hovering motion (reduced amplitude)
+      markerGroup.current.position.y = position[1] + 0.35 + Math.sin(time * 1.8) * 0.04;
     }
     if (ringRef.current) {
-      // Expand and fade ring beacon
-      const scale = 1 + (Math.sin(time * 2) + 1) * 0.35;
+      // Soft fading ground radar pulse
+      const pulse = (Math.sin(time * 1.8) + 1) * 0.5;
+      const scale = 1.0 + pulse * 0.25;
       ringRef.current.scale.set(scale, scale, scale);
-      ringRef.current.material.opacity = 0.6 - (Math.sin(time * 2) + 1) * 0.2;
+      ringRef.current.material.opacity = 0.45 - pulse * 0.2;
     }
   });
 
   return (
     <group position={[position[0], 0, position[2]]}>
       {/* Ground Pulse Ring */}
-      <mesh ref={ringRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
-        <ringGeometry args={[0.3, 0.45, 32]} />
-        <meshBasicMaterial color={emissive} transparent opacity={0.5} side={THREE.DoubleSide} />
+      <mesh ref={ringRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+        <ringGeometry args={[0.22, 0.32, 28]} />
+        <meshBasicMaterial color={emissive} transparent opacity={0.35} side={THREE.DoubleSide} />
       </mesh>
 
-      {/* Floating Pin & Sphere */}
-      <group ref={markerGroup} position={[0, position[1] + 0.4, 0]}>
-        {/* Glowing Head */}
-        <mesh position={[0, 0.5, 0]}>
-          <sphereGeometry args={[0.22, 20, 20]} />
-          <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.5} roughness={0.2} />
+      {/* Floating Modern Tech Pin */}
+      <group ref={markerGroup} position={[0, position[1] + 0.35, 0]}>
+        {/* Beacon Sphere */}
+        <mesh position={[0, 0.32, 0]}>
+          <sphereGeometry args={[0.14, 16, 16]} />
+          <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.4} roughness={0.3} />
         </mesh>
         
-        {/* Pointer Cone */}
-        <mesh position={[0, 0.22, 0]} rotation={[0, 0, Math.PI]}>
-          <coneGeometry args={[0.18, 0.4, 16]} />
-          <meshStandardMaterial color={color} roughness={0.3} />
+        {/* Needle Stem */}
+        <mesh position={[0, 0.15, 0]}>
+          <cylinderGeometry args={[0.02, 0.02, 0.24, 8]} />
+          <meshStandardMaterial color="#94A3B8" metalness={0.8} roughness={0.2} />
         </mesh>
 
-        {/* Core Center White Accent */}
-        <mesh position={[0, 0.5, 0.16]}>
-          <sphereGeometry args={[0.07, 12, 12]} />
+        {/* Center Tech Core Dot */}
+        <mesh position={[0, 0.32, 0.12]}>
+          <sphereGeometry args={[0.04, 10, 10]} />
           <meshBasicMaterial color="#FFFFFF" />
         </mesh>
       </group>
