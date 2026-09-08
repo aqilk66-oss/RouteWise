@@ -98,15 +98,12 @@ export const sendContactEmail = async ({ name, email, subject, message }) => {
     return { success: false, error: 'Please enter your message.' };
   }
 
+  // Exact EmailJS template parameters matching {{name}}, {{email}}, {{subject}}, {{message}}
   const templateParams = {
     name: name.trim(),
     email: email.trim(),
     subject: subject.trim(),
     message: message.trim(),
-    reply_to: email.trim(),
-    // Helpful institutional metadata
-    submitted_at: new Date().toLocaleString(),
-    platform: 'RouteWise School Transport Portal',
   };
 
   return sendEmail(templateParams);
