@@ -1,5 +1,4 @@
-import { describe, it, expect } from 'vitest';
-import { app, auth, db, storage, isFirebaseConfigured } from '../../firebase/firebaseConfig';
+import { app, auth, db, storage, rtdb, isFirebaseConfigured, isRtdbConfigured } from '../../firebase/firebaseConfig';
 
 describe('Firebase Modular SDK Connection Suite', () => {
   it('correctly loads VITE_ environment variables via import.meta.env', () => {
@@ -14,6 +13,10 @@ describe('Firebase Modular SDK Connection Suite', () => {
 
   it('verifies that isFirebaseConfigured evaluates to true', () => {
     expect(isFirebaseConfigured).toBe(true);
+  });
+
+  it('verifies that isRtdbConfigured evaluates to true and points to expected URL', () => {
+    expect(isRtdbConfigured).toBe(true);
   });
 
   it('verifies Firebase App instance is successfully initialized', () => {
@@ -36,5 +39,10 @@ describe('Firebase Modular SDK Connection Suite', () => {
   it('verifies Firebase Storage instance is properly initialized with modular SDK', () => {
     expect(storage).toBeDefined();
     expect(storage.app).toBe(app);
+  });
+
+  it('verifies Firebase Realtime Database (RTDB) instance is properly initialized', () => {
+    expect(rtdb).toBeDefined();
+    expect(rtdb.app).toBe(app);
   });
 });

@@ -31,6 +31,7 @@ import { TRIP_STATUS } from '../../constants/collections';
 
 export const DriverTrackingPage = () => {
   const { 
+    driverProfile,
     assignedBus, 
     assignedRoute, 
     routeStops, 
@@ -78,6 +79,9 @@ export const DriverTrackingPage = () => {
       try {
         await trackingService.publishDriverLocation(activeTrip.id, locationData, {
           busId: assignedBus?.id,
+          driverId: driverProfile?.id || activeTrip?.driverId,
+          routeId: assignedRoute?.id || activeTrip?.routeId,
+          schoolId: activeTrip?.schoolId || assignedRoute?.schoolId,
         });
         setLastTransmitted(Date.now());
       } catch (err) {
@@ -85,7 +89,7 @@ export const DriverTrackingPage = () => {
         setErrorMessage('Location acquired, but transmission to dispatch failed. Retrying...');
       }
     }
-  }, [activeTrip?.id, assignedBus?.id]);
+  }, [activeTrip, assignedBus?.id, assignedRoute?.id, driverProfile?.id]);
 
   /**
    * Handle LocationManager errors

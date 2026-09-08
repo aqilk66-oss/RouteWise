@@ -274,9 +274,18 @@ export const RouteWiseMap = ({
                         {validBus.trackingStatus || 'Active'}
                       </span>
                     </div>
-                    {validBus.speed !== undefined && validBus.speed !== null && (
+                    {validBus.speed !== undefined && validBus.speed !== null ? (
                       <p className="text-[11px] text-slate-600 font-medium">
-                        Speed: <strong>{validBus.speed} mph</strong>
+                        Speed: <strong>{validBus.speed} km/h</strong>
+                      </p>
+                    ) : (
+                      <p className="text-[11px] text-slate-500 italic">
+                        Speed unavailable
+                      </p>
+                    )}
+                    {validBus.heading !== undefined && validBus.heading !== null && (
+                      <p className="text-[11px] text-slate-600 font-medium">
+                        Heading: <strong>{validBus.heading}°</strong>
                       </p>
                     )}
                     {validBus.accuracy && (

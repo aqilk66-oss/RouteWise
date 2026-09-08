@@ -59,6 +59,9 @@ VITE_FIREBASE_MESSAGING_SENDER_ID=806918370452
 VITE_FIREBASE_APP_ID=1:806918370452:web:...
 VITE_FIREBASE_MEASUREMENT_ID=G-...
 
+# Firebase Realtime Database (Stage 31 Live Tracking)
+VITE_FIREBASE_DATABASE_URL=https://routewise-b4741-default-rtdb.firebaseio.com/
+
 # Optional EmailJS Client Dispatch
 VITE_EMAILJS_SERVICE_ID=
 VITE_EMAILJS_TEMPLATE_ID=

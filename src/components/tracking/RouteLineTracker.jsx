@@ -61,12 +61,12 @@ export const RouteLineTracker = ({
           </div>
         </div>
 
-        {/* Honest ETA Badge */}
+        {/* Honest ETA Badge (No fake ETA per Stage 31 rules) */}
         <div className="flex items-center gap-2 self-end sm:self-center px-3 py-1.5 rounded-xl bg-slate-50 border border-border text-xs">
           <Clock className="w-3.5 h-3.5 text-brand-slate" />
           {isTripLive ? (
             <span className="font-semibold text-brand-navy">
-              Next Stop ETA: <span className="text-brand-blue font-bold">~08 mins</span>
+              Next Stop: <span className="text-brand-slate font-medium">ETA unavailable (dynamic routing in progress)</span>
             </span>
           ) : (
             <span className="text-brand-slate text-[11px]">

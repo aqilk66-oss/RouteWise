@@ -59,12 +59,12 @@ export const LiveTrackingCard = ({
           </div>
         </div>
 
-        {/* Honest ETA Badge (No fake countdowns) */}
+        {/* Honest ETA Badge (No fake countdowns per Stage 31 rules) */}
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-border text-xs self-end sm:self-center">
           <Clock className="w-4 h-4 text-brand-slate" />
           {isLive ? (
             <span className="font-semibold text-brand-navy">
-              Estimated Arrival: <span className="text-brand-blue font-bold">~08 mins</span>
+              Arrival Estimate: <span className="text-brand-slate font-medium">ETA unavailable (calculating transit duration)</span>
             </span>
           ) : (
             <span className="text-brand-slate text-[11px]">
@@ -128,14 +128,14 @@ export const LiveTrackingCard = ({
             {currentLocation?.speed !== null && currentLocation?.speed !== undefined ? (
               `${currentLocation.speed} km/h`
             ) : (
-              <span className="text-brand-slate">Stationary / Idle</span>
+              <span className="text-brand-slate">Speed unavailable</span>
             )}
           </p>
           <span className="text-[10px] text-brand-slate">
             {currentLocation?.heading !== null && currentLocation?.heading !== undefined ? (
               `Heading: ${currentLocation.heading}°`
             ) : (
-              'Heading stable'
+              'Heading unavailable'
             )}
           </span>
         </div>

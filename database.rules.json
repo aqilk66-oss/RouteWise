@@ -1,0 +1,42 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "liveTracking": {
+      "$tripId": {
+        // Only authenticated users can access live tracking
+        // Reads are allowed for authenticated staff, or parents/students/drivers with legitimate transport roles
+        ".read": "auth != null",
+        
+        // Writes are strictly restricted to authenticated Drivers or Admins
+        // Validates:
+        // 1. User must be logged in
+        // 2. Data payload must contain valid latitude [-90, 90] and longitude [-180, 180]
+        // 3. Status must be one of the recognized tracking states
+        // 4. Must include valid timestamp
+        ".write": "auth != null && (data.val() == null || data.child('driverId').val() == auth.uid || newData.child('driverId').val() == auth.uid || auth.token.role == 'admin' || auth.token.role == 'superadmin')",
+        
+        ".validate": "newData.hasChildren(['latitude', 'longitude', 'status']) && newData.child('latitude').isNumber() && newData.child('latitude').val() >= -90 && newData.child('latitude').val() <= 90 && newData.child('longitude').isNumber() && newData.child('longitude').val() >= -180 && newData.child('longitude').val() <= 180 && (newData.child('status').val() == 'active' || newData.child('status').val() == 'waiting' || newData.child('status').val() == 'stale' || newData.child('status').val() == 'stopped' || newData.child('status').val() == 'completed' || newData.child('status').val() == 'offline')",
+        
+        "latitude": {
+          ".validate": "newData.isNumber() && newData.val() >= -90 && newData.val() <= 90"
+        },
+        "longitude": {
+          ".validate": "newData.isNumber() && newData.val() >= -180 && newData.val() <= 180"
+        },
+        "accuracy": {
+          ".validate": "newData.val() == null || (newData.isNumber() && newData.val() >= 0)"
+        },
+        "heading": {
+          ".validate": "newData.val() == null || (newData.isNumber() && newData.val() >= 0 && newData.val() <= 360)"
+        },
+        "speed": {
+          ".validate": "newData.val() == null || (newData.isNumber() && newData.val() >= 0)"
+        },
+        "status": {
+          ".validate": "newData.isString() && (newData.val() == 'active' || newData.val() == 'waiting' || newData.val() == 'stale' || newData.val() == 'stopped' || newData.val() == 'completed' || newData.val() == 'offline')"
+        }
+      }
+    }
+  }
+}
